@@ -22,6 +22,7 @@
 
  When we update the characters, we will only update [7:0] bits.
 */
+
 uint16_t __attribute__((aligned(16))) msg[8] = {
     (0 << 8) | 0x3F, // seven-segment value of 0
     (1 << 8) | 0x06, // seven-segment value of 1
