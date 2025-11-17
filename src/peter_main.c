@@ -1,4 +1,30 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include "pico/stdlib.h"
+#include "hardware/pwm.h"
+#include "hardware/irq.h"
+#include "queue.h"
+#include "support.h"
 
+//////////////////////////////////////////////////////////////////////////////
+
+static int duty_cycle = 0;
+static int dir = 0;
+static int color = 0;
+
+void display_init_pins();
+void display_init_timer();
+void display_char_print(const char message[]);
+void keypad_init_pins();
+void keypad_init_timer();
+void init_wavetable(void);
+void set_piano_freq(int note_index, float frequency);
+void stop_piano_note(int note_index);
+float get_note_frequency(int note_index);
+extern KeyEvents kev;
+
+///////////////////////////////////////////////////////////
 
 void pwm_audio_handler() {
     // PWM interrupt handler for multi-note piano audio generation
