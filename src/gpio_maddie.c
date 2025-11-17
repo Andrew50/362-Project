@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-int main() {
+int gpio_maddie_main(void) {
     stdio_init_all();
 
     // ABCD is the select row

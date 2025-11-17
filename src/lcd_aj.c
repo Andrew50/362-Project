@@ -1,5 +1,8 @@
+#include <stdio.h>
+#include <stdint.h>
+#include "chardisp.h"
 
-static void show_pitch_volume(const char *pitch, uint8_t volume_percent)
+void show_pitch_volume(const char *pitch, uint8_t volume_percent)
 {
 	char line1[17];
 	char line2[17];

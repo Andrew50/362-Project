@@ -23,7 +23,7 @@ static uint16_t read_adc_channel(uint ch) {
     return adc_read();      // blocking read of a single sample
 }
 
-int main() {
+int adc_zac_main(void) {
     init_adc();
 
     while (true) {
