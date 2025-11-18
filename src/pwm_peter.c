@@ -8,6 +8,7 @@
 #include "hardware/irq.h"
 #include "queue.h"
 #include "support.h"
+#include <stdint.h>
 
 //////////////////////////////////////////////////////////////////////////////
 // Combined PWM / piano audio module
@@ -39,6 +40,12 @@ static const float note_freq_table[7] = {
 static int duty_cycle = 0;
 static int dir = 0;
 static int color = 0;
+
+// Wavetable length (number of samples in the lookup table)
+#define N 1000
+
+// Wavetable used for audio synthesis (values scaled 0..65535)
+static uint32_t wavetable[N];
 
 // Forward declarations so other modules (e.g., main.c) can call into here
 void init_wavetable(void);
@@ -81,18 +88,18 @@ float get_note_frequency(int note_index) {
 
 // Initialize sine wave table for smooth audio (automatically calculate sine values)
 void init_wavetable(void) {
-    // Generate 1000-point sine wave lookup table
+    // Generate N-point sine wave lookup table (values scaled 0..65535)
     // This provides smooth audio output via PWM
-    for (int i = 0; i < 1000; i++) {
-        wavetable[i] = (int16_t)((16383.0f * sinf(2.0f * 3.14159f * i / 1000.0f)) + 16384.0f);
+    for (int i = 0; i < N; i++) {
+        float s = sinf(2.0f * 3.14159265358979323846f * (float)i / (float)N);
+        // scale from [-1,1] -> [0,65535]
+        wavetable[i] = (uint32_t)((s + 1.0f) * 32767.5f + 0.5f);
     }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // PWM interrupt handler (from peter_main.c)
 //////////////////////////////////////////////////////////////////////////////
-
-extern KeyEvents kev;
 
 // PWM interrupt handler for multi-note piano audio generation
 void pwm_audio_handler(void) {
