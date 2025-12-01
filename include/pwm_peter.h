@@ -5,6 +5,8 @@
 
 // Expose piano control API for use from main.c or other modules
 void init_wavetable(void);
+void init_pwm_for_audio(unsigned gpio, unsigned int top, float sample_rate);
+void set_volume_from_adc(uint16_t adc_value);
 void set_piano_freq(int note_index, float frequency);
 void stop_piano_note(int note_index);
 float get_note_frequency(int note_index);
