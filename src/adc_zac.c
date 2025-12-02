@@ -3,7 +3,7 @@
 #include "pico/stdlib.h"
 #include "hardware/adc.h"
 
-// Global ADC values array (shared with other modules)
+// Global ADC values array
 uint16_t vals[7] = {0};
 
 void init_adc(void) {

@@ -34,7 +34,7 @@ const int SPI_DISP_TX = 19;
 
 //////////////////////////////////////////////////////////////////////////////
 
-uint16_t vals[7];   //global array for adc values
+uint16_t vals[7];   // global array for adc values
 
 void cd_init();
 void cd_display1(const char *str);
@@ -84,7 +84,6 @@ int main()
 #endif
 
 #ifdef PETER
-    // Peter's PWM / piano support
     init_wavetable();
     init_pwm_for_audio(36, 999, 20000.0f);
     adc_init();
