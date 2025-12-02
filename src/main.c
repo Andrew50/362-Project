@@ -34,6 +34,8 @@ const int SPI_DISP_TX = 19;
 
 //////////////////////////////////////////////////////////////////////////////
 
+uint16_t vals[7];   //global array for adc values
+
 void cd_init();
 void cd_display1(const char *str);
 void cd_display2(const char *str);
@@ -88,14 +90,14 @@ int main()
     adc_init();
     adc_gpio_init(26); // ADC0 on GPIO26
 
-    // Play a test note and update volume from global adc_vals[0]
+    // Play a test note and update volume from global vals[0]
     set_piano_freq(0, get_note_frequency(0)); // start C4
     for (;;) {
-        // Read volume from ADC channel 0 (filled by adc task)
+        // Read volume from ADC channel 0 (global vals array)
         adc_select_input(0);
         sleep_us(5);
-        adc_vals[0] = adc_read();
-        set_volume_from_adc(adc_vals[0]);
+        vals[0] = adc_read();
+        set_volume_from_adc(vals[0]);
         sleep_ms(10);
     }
 
