@@ -87,16 +87,29 @@ int main()
     init_wavetable();
     init_pwm_for_audio(36, 999, 20000.0f);
     adc_init();
-    adc_gpio_init(26); // ADC0 on GPIO26
 
-    // Play a test note and update volume from global vals[0]
-    set_piano_freq(0, get_note_frequency(0)); // start C4
+    // Track previous key states to detect press/release
+    bool key_was_pressed[7] = {false};
+    const uint16_t KEY_THRESHOLD = 2048; // midpoint of 0..4095
+
+    // Main loop: play notes based on IR sensor keys in vals[0..6]
     for (;;) {
-        // Read volume from ADC channel 0 (global vals array)
-        adc_select_input(0);
-        sleep_us(5);
-        vals[0] = adc_read();
-        set_volume_from_adc(vals[0]);
+        // Check keys vals[0..6] for press/release (filled by adc_zac)
+        for (int key = 0; key < 7; key++) {
+            bool is_pressed = (vals[key] > KEY_THRESHOLD);
+
+            // Key pressed (transition from not pressed to pressed)
+            if (is_pressed && !key_was_pressed[key]) {
+                set_piano_freq(key, get_note_frequency(key)); // note 0..6 (C4..B4)
+                key_was_pressed[key] = true;
+            }
+            // Key released (transition from pressed to not pressed)
+            else if (!is_pressed && key_was_pressed[key]) {
+                stop_piano_note(key);
+                key_was_pressed[key] = false;
+            }
+        }
+
         sleep_ms(10);
     }
 
