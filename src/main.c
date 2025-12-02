@@ -82,21 +82,20 @@ int main()
 #endif
 
 #ifdef PETER
-
+    // Peter's PWM / piano support
     init_wavetable();
-
     init_pwm_for_audio(36, 999, 20000.0f);
-   
     adc_init();
     adc_gpio_init(26); // ADC0 on GPIO26
 
-    // Play a test note and update volume in a loop
+    // Play a test note and update volume from global adc_vals[0]
     set_piano_freq(0, get_note_frequency(0)); // start C4
     for (;;) {
+        // Read volume from ADC channel 0 (filled by adc task)
         adc_select_input(0);
         sleep_us(5);
-        uint16_t v = adc_read();
-        set_volume_from_adc(v);
+        adc_vals[0] = adc_read();
+        set_volume_from_adc(adc_vals[0]);
         sleep_ms(10);
     }
 

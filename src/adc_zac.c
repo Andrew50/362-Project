@@ -3,6 +3,9 @@
 #include "pico/stdlib.h"
 #include "hardware/adc.h"
 
+// Global ADC values array
+uint16_t adc_vals[7] = {0};
+
 void init_adc(void) {
     stdio_init_all();
     adc_init();
@@ -27,17 +30,15 @@ int adc_zac_main(void) {
     init_adc();
 
     while (true) {
-        uint16_t vals[7];
-
-        // Take one sample per channel
+        // Take one sample per channel and store in adc_vals
         for (int ch = 0; ch < 7; ch++) {
-            vals[ch] = read_adc_channel(ch);
+            adc_vals[ch] = read_adc_channel(ch);
         }
 
         // Print them all on one line
         printf("ADC: ");
         for (int ch = 0; ch < 7; ch++) {
-            printf("CH%d=%4u  ", ch, vals[ch]);
+            printf("CH%d=%4u  ", ch, adc_vals[ch]);
         }
         printf("\r");       // overwrite same line
         fflush(stdout);

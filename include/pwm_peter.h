@@ -2,6 +2,10 @@
 #define PWM_PETER_H
 
 #include <stdbool.h>
+#include <stdint.h>
+
+// Global ADC values (updated by adc_zac or external ADC module)
+extern uint16_t adc_vals[7];
 
 // Expose piano control API for use from main.c or other modules
 void init_wavetable(void);
