@@ -34,6 +34,8 @@ const int SPI_DISP_TX = 19;
 
 //////////////////////////////////////////////////////////////////////////////
 
+uint16_t vals[7];   //global array for adc values
+
 void cd_init();
 void cd_display1(const char *str);
 void cd_display2(const char *str);
