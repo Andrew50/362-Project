@@ -15,8 +15,7 @@
 // 0: A, 1: B, 2: C, 3: D, 4: E, 5: F, 6: G, 7: volume
 uint8_t bar_height[NUM_GROUPS];
 
-// MAKE THIS A GLOBAL VARIABLE... REPLACE THE 0s WITH TEST VARIABLES FOR NOW
-uint16_t vals[7] = {5000, 5000, 5000, 5000, 5000, 5000, 5000};
+extern uint16_t vals[7];
 
 // GPIO pins
 const int R1 = 2; // R1
@@ -41,7 +40,7 @@ bool g_out = 0;
 bool b_out = 0;
 
 // Function list
-int gpio_main(void);
+void gpio_main(void);
 void display_note(uint8_t row);
 void set_row(uint8_t row);
 void clock_pulse(void);
@@ -50,7 +49,7 @@ void color_displayed(uint8_t group);
 uint8_t map_sensor_to_height(uint16_t sensor_val);
 void update_bar_heights(void);
 
-int gpio_main(void) {
+void gpio_main(void) {
     stdio_init_all();
 
     // Inititalize all pins
@@ -99,14 +98,14 @@ int gpio_main(void) {
     bar_height[7] = 2;
     // TEST HEIGHTS CHANGE WHEN GIVEN SENSOR VALUES ////////////// */
 
-    while (true) {
+    /*while (true) {
         update_bar_heights();
 
         for (uint8_t row = 0; row < HEIGHT; row++) {
             display_note(row);
         }
         // UPDATE BAR HEIGHT HERE WHEN GIVEN SENSOR VALUES
-    }
+    }*/
 }
 
 // HELPER FUNCTIONS BELOW
@@ -241,8 +240,8 @@ void display_note(uint8_t row)
 
 uint8_t map_sensor_to_height(uint16_t sensor_val)
 {
-    const uint16_t SENSOR_OFF = 1700; // sensors are off if reading 1700 or less
-    const uint16_t SENSOR_MAX = 4100; // largest value that can be read by the sensors
+    const uint16_t SENSOR_OFF = 1900; // sensors are off if reading 1700 or less
+    const uint16_t SENSOR_MAX = 3800; // largest value that can be read by the sensors
     const uint16_t ACTIVE_RANGE = SENSOR_MAX - SENSOR_OFF; // 2400 pixels create the "range"
     const uint16_t STEP = ACTIVE_RANGE / MAX_HEIGHT; // 2400 / 16 = 150
 
