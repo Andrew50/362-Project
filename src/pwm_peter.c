@@ -42,6 +42,12 @@ static uint32_t wavetable[N];
 // Global volume (0..65535). Default full scale.
 static volatile uint32_t piano_volume = 65535u;
 
+// Last computed values (updated in IRQ) for debug printing
+volatile uint32_t pwm_last_mixed = 0;   // post-mix, pre-volume (0..65535)
+volatile uint32_t pwm_last_scaled = 0;  // after volume applied (0..65535)
+volatile uint32_t pwm_last_output = 0;  // final PWM level (0..period-1)
+volatile uint8_t  pwm_last_active = 0;  // number of active notes mixed
+
 // Forward declarations so other modules (e.g., main.c) can call into here
 void init_wavetable(void);
 void set_piano_freq(int note_index, float frequency);
@@ -135,6 +141,12 @@ void pwm_audio_handler(void) {
     uint64_t tmpp = (uint64_t)scaled * (uint64_t)period;
     uint32_t output = (uint32_t)(tmpp >> 16); // divide by 65536
     if (output >= period) output = period - 1;
+    // update debug variables (safe, small writes)
+    pwm_last_mixed = (uint32_t)mixed_sample;
+    pwm_last_scaled = scaled;
+    pwm_last_output = output;
+    pwm_last_active = (uint8_t)active_count;
+
     pwm_set_gpio_level(36, (uint16_t)output);
 }
 

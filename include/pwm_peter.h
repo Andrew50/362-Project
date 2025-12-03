@@ -11,6 +11,11 @@ extern uint16_t vals[7];
 void init_wavetable(void);
 void init_pwm_for_audio(unsigned gpio, unsigned int top, float sample_rate);
 void set_volume_from_adc(uint16_t adc_value);
+// Debug values populated by PWM IRQ handler
+extern volatile uint32_t pwm_last_mixed;
+extern volatile uint32_t pwm_last_scaled;
+extern volatile uint32_t pwm_last_output;
+extern volatile uint8_t pwm_last_active;
 void set_piano_freq(int note_index, float frequency);
 void stop_piano_note(int note_index);
 float get_note_frequency(int note_index);

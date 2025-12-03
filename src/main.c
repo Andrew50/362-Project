@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
-#include "chardisp.h"
+//#include "chardisp.h"
 #include "pwm_peter.h"
 #include "hardware/adc.h"
 
@@ -13,7 +13,7 @@
 // Demo selection: uncomment exactly ONE of these to choose which module runs
 //////////////////////////////////////////////////////////////////////////////
 // #define AJ
-// #define PETER
+#define PETER
 // #define MADDIE
 // #define ZAC
 
@@ -34,12 +34,15 @@ const int SPI_DISP_TX = 19;
 
 //////////////////////////////////////////////////////////////////////////////
 
-uint16_t vals[7];   // global array for adc values
 
 void cd_init();
 void cd_display1(const char *str);
 void cd_display2(const char *str);
 void init_chardisp_pins();
+
+// ADC helpers from adc_zac.c
+void init_adc(void);
+void adc_update_all(void);
 
 // Entry points from teammate modules
 int adc_zac_main(void);
@@ -86,14 +89,18 @@ int main()
 #ifdef PETER
     init_wavetable();
     init_pwm_for_audio(36, 999, 20000.0f);
-    adc_init();
+    init_adc();
 
     // Track previous key states to detect press/release
     bool key_was_pressed[7] = {false};
-    const uint16_t KEY_THRESHOLD = 2048; // midpoint of 0..4095
+    const uint16_t KEY_THRESHOLD = 2100;
 
     // Main loop: play notes based on IR sensor keys in vals[0..6]
+    int print_timer_ms = 0;
     for (;;) {
+        // Update ADC readings into vals[] (reads all channels)
+        adc_update_all();
+
         // Check keys vals[0..6] for press/release (filled by adc_zac)
         for (int key = 0; key < 7; key++) {
             bool is_pressed = (vals[key] > KEY_THRESHOLD);
@@ -109,8 +116,19 @@ int main()
                 key_was_pressed[key] = false;
             }
         }
-
         sleep_ms(10);
+        print_timer_ms += 10;
+        if (print_timer_ms >= 250) {
+            // Print PWM debug info similar to ADC printouts
+                 // Overwrite the same line like the ADC printout (no new-line)
+                 printf("PWM: mixed=%5u scaled=%5u out=%5u active=%u\r",
+                     (unsigned)pwm_last_mixed,
+                     (unsigned)pwm_last_scaled,
+                     (unsigned)pwm_last_output,
+                     (unsigned)pwm_last_active);
+                 fflush(stdout);
+            print_timer_ms = 0;
+        }
     }
 
     return 0;
